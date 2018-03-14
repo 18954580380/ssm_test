@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcy.mapper.UserMapper">
+	<select id="findUsers" resultType="com.lcy.pojo.User" parameterType="java.lang.Integer">
+		select * from t_user 
+		<if test="_parameter!=null">
+		  where id=#{id}
+		</if> 
+	</select>
+	
+	
+	<select id="deleteUser" parameterType="java.lang.Integer">
+		DELETE from t_user where id=#{id}
+	</select>
+	
+	 <insert id="insertUser" parameterType="com.lcy.pojo.User" >
+       <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      </selectKey>
+        INSERT INTO t_user(name,age)values(#{name},#{age});
+    </insert>
+    
+     <update id="updateUser" parameterType="com.lcy.pojo.User" >
+        update t_user set name='${name}',age=${age} where id=${id};
+     </update>
+    
+     <!-- 批量导出到excel -->
+     <select id="findUser" resultType="java.util.HashMap">
+		select id,name from t_user
+	 </select>
+	
+	
+	<!-- 批量插入数据 -->
+	<insert id="importUser" parameterType="java.util.HashMap">
+	   insert into t_user (name,age) values
+	 <foreach collection="list" item="item" index="index" separator=",">
+	    (#{item.name},#{item.age})
+	 </foreach>
+	</insert>
+	
+</mapper>
